@@ -9,7 +9,7 @@ class ContenedorMongoDb {
 
   async getAll() {
     try {
-      const resFind = await this.modelMongo.find();
+      const resFind = await this.modelMongo.find().lean();
       return resFind;
     } catch (error) {
       console.log("Error en getAll: " + error);

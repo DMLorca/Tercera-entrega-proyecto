@@ -119,6 +119,13 @@ userRouter.post('/login', passport.authenticate('autenticacion'), (req, res) => 
     //res.sendFile('index.html', { root: __dirname });
 });
 
+userRouter.get('/logout', (req, res) => {
+
+    req.session.destroy((err) =>{
+        if(!err) res.render('logout', { credencial });
+        else res.send({status: 'Logout ERROR', body: err})
+    })
+});
 
 
 //GET'/:id' = Lista todos los productos con id=0
@@ -127,7 +134,9 @@ prodRouter.get('/',autenticacion, (req, res) => {
 
 
     Producto.getAll().then((prod) => {
-        res.render('templateTable',{prod});
+        let producto = [];
+        producto =prod;
+        res.render('templateTable',{producto});
     });
 
     /* const prodId = parseInt(req.params.id);
