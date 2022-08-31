@@ -1,0 +1,9 @@
+{
+      "email": "email",
+      "password": "hola",
+      "name": "username",
+      "address": "address",
+      "age": 2,
+      "celPhone": 351,
+      "photo": "photo"
+}

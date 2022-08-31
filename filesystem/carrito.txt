@@ -1,0 +1,22 @@
+[
+  [
+    {
+      "idc": 1
+    }
+  ],
+  [
+    {
+      "idc": 2
+    },
+    {
+      "title": "Escuadra",
+      "description": "descripcion del producto",
+      "code": "clr",
+      "timestamp": "[8/6/2022 20:31]",
+      "stock": "4",
+      "price": "252.6",
+      "thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png",
+      "id": 2
+    }
+  ]
+]
