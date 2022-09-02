@@ -68,9 +68,9 @@ app.use(passport.session());
 app.use('/api/productos', prodRouter);
 app.use('/api/carrito', carroRouter);
 app.use('/user', userRouter);
-app.use((req,res,next) => {
+/* app.use((req,res,next) => {
     res.status(404).send({error: 'Error de ruta'});
-})
+}) */
 
 const PORT = process.env.PORT || 8080;
 
@@ -87,7 +87,9 @@ app.engine(
         extname: '.hbs'
     })
 );
-
+app.get('/', (req, res) => {
+    res.redirect('/user/');
+});
 userRouter.get('/', (req, res) => {
     res.render('login');
 });
