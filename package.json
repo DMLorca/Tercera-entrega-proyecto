@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set VAR_ENT=mongo&& node main.js"
+    "start": "set VAR_ENT=mongo&& node main.js",
+    "heroku-postbuild": "npm run start"
   },
   "keywords": [],
   "author": "",

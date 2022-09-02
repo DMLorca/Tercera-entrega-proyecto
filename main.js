@@ -72,6 +72,8 @@ app.use((req,res,next) => {
     res.status(404).send({error: 'Error de ruta'});
 })
 
+const PORT = process.env.PORT || 8080;
+
 //--------- RENDER LOGIN Y LOGOUT ---------------
 
 const {engine} = require('express-handlebars');
@@ -319,6 +321,6 @@ carroRouter.delete('/:id/productos/:id_prod', (req, res) => {
     ejecutarDelete();
 })
 
-app.listen(8080, () => {
+app.listen(PORT, () => {
     console.log('Servidor levantado');
 });
