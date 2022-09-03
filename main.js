@@ -4,6 +4,7 @@ const req = require('express/lib/request');
 const app = express();
 const passport = require('./passport');
 const session = require('express-session');
+const sendEmail = require('./registerEmail');
 //const session = require('cookie-session');
 const MongoStore = require('connect-mongo');
 
@@ -105,10 +106,21 @@ userRouter.post('/register', passport.authenticate('registracion'), (req, res) =
 
     const { username, email, address, age, celPhone, photo } = req.body;
 
+    const obj_Register = {
+        username: username, 
+        email:email, 
+        address:address, 
+        age:age, 
+        celPhone:celPhone, 
+        photo:photo
+    };
+
     async function updateUser() {
 
         await userModel.updateMany({ name: username }, { $set: { email: email, address: address, age: age, celPhone: celPhone, photo: photo } });
         console.log("registrado correctamente");
+        sendEmail(obj_Register);
+
         res.redirect('/user/');
     }
     updateUser();
