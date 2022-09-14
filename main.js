@@ -5,6 +5,7 @@ const app = express();
 const passport = require('./passport');
 const session = require('express-session');
 const sendEmail = require('./registerEmail');
+const sendWsp = require('./chartWsp');
 //const session = require('cookie-session');
 const MongoStore = require('connect-mongo');
 
@@ -155,20 +156,6 @@ prodRouter.get('/',autenticacion, (req, res) => {
         res.render('templateTable',{producto});
     });
 
-    /* const prodId = parseInt(req.params.id);
-
-    if(prodId == 0){
-        Producto.getAll().then((prod) => {
-            res.send(prod);
-        });
-    } else {
-        Producto.getByIdProd(prodId).then(result => {
-        if(result){
-            res.send(result);
-        }else
-            res.status(400).send({error: 'Producto no encontrado'});
-    });
-    } */
 });
 
 //POST '/' = Incorpora productos
@@ -202,7 +189,7 @@ prodRouter.post('/', (req, res) => {
 
 //PUT '/:id' = Actualiza producto
 //ACTUALIZADO
-prodRouter.put('/:id',autenticacion, autorizacion, (req, res) => {
+prodRouter.put('/:id', (req, res) => {
     const prodId = parseInt(req.params.id);
     const {title, description, code, stock, price, thumbnail} = req.body;
 
@@ -236,7 +223,7 @@ prodRouter.put('/:id',autenticacion, autorizacion, (req, res) => {
 
 //DELETE '/:id' = Borra un producto
 //ACTUALIZADO
-prodRouter.delete('/:id',autenticacion, autorizacion, (req, res) => {
+prodRouter.delete('/:id', (req, res) => {
     const prodId = parseInt(req.params.id);
     const ejecutarDelete = async (prodId) => {
 
@@ -251,62 +238,65 @@ prodRouter.delete('/:id',autenticacion, autorizacion, (req, res) => {
     ejecutarDelete(prodId);
 });
 
-//POST '/' = Crea un carro y devuelve id
-//ACTUALIZADO
-carroRouter.post('/', (req, res) => {
+//---------------------------------------------------------------------------------------------
 
+
+//POST '/' = Crea un carro y devuelve name
+//ACTUALIZADO -- OK
+carroRouter.post('/', (req, res) => {
+    const {user} = req.body;
     async function makeCarro(){
-        const idc = await Carritos.addChart();
-        res.send(`Carro creado idc=${idc}`);
+        const name = await Carritos.addChartUser(user);
+        res.send(`Carro creado name=${name}`);
     }
     makeCarro();
 });
 
 //DELETE '/:id' = Vacia un carrito y lo elimina
 //ACTUALIZADO
-carroRouter.delete('/:id', (req, res) => {
+carroRouter.delete('/', (req, res) => {
 
-    const prodId = parseInt(req.params.id);
+    const { user } = req.body;
 
-    const ejecutarDelete = async (prodId) => {
+    const ejecutarDelete = async () => {
 
-        const resultado = await Carritos.deleteChart(prodId);
+        const resultado = await Carritos.deleteChart(user);
         
         if (resultado == null) {
             res.status(400).send({ error: 'Carro no encontrado' });
         } else{
-            res.send(`Eliminado carro id: ${prodId}`);
+            res.send(`Eliminado carro id: ${user}`);
         }
     };
-    ejecutarDelete(prodId);
+    ejecutarDelete();
 })
 
-//GET: '/id/productos' Permite listar todos los prod guardados si id=0
-
-carroRouter.get('/:id/productos', (req, res) => {
-    const prodId = parseInt(req.params.id);
+//GET: '/' Permite listar todos los prod guardados de user
+//ACTUALIZADO -- OK
+carroRouter.get('/', (req, res) => {
+    const { user } = req.body;
 
     async function showProd(){
-        const productos = await Carritos.getAll(prodId);
+        const productos = await Carritos.getAll(user);
+        sendWsp(productos);
         res.send(productos);
     }
     showProd();
 });
 
 //POST '/:id/productos' = Incorpora productos al carro por su id
-//ACTUALIZADO
+//ACTUALIZADO -- OK
 carroRouter.post('/:id/productos', (req, res) => {
     const prodId = parseInt(req.params.id);
-    const { carro } = req.body;
+    const { user } = req.body;
 
-    Producto.getById(prodId).then((producto) => {
-        console.log(producto)
+    Producto.getByIdProd(prodId).then((producto) => {
 
-        if (producto.id) {
-            Carritos.addProdChart(producto, carro).then((result) => {
-
-                if (result)
+        if (producto) {
+            Carritos.addProdChart(producto, user).then((result) => {
+                if (result){
                     res.send(200);
+                }
                 else
                     res.status(400).send({ error: 'Carrito no encontrado' });
             })
@@ -317,16 +307,16 @@ carroRouter.post('/:id/productos', (req, res) => {
 
 })
 
-//DELETE ':id/productos/:id_prod' = Elimina un prod del carrito por su id de carro y producto
-//ACTUALIZADO
-carroRouter.delete('/:id/productos/:id_prod', (req, res) => {
+//DELETE ':id/productos/' = Elimina un prod del carrito por su user de carro y producto
+//ACTUALIZADO-- OK
+carroRouter.delete('/:id/productos/', (req, res) => {
 
-    const carroId = parseInt(req.params.id);
-    const prodId = parseInt(req.params.id_prod);
+    const { user } = req.body;
+    const prodId = parseInt(req.params.id);
 
     const ejecutarDelete = async () => {
 
-        const resultado = await Carritos.deleteByIdChart(carroId, prodId);
+        const resultado = await Carritos.deleteByIdChart(user, prodId);
         if (resultado)
             res.send(200);
         else
