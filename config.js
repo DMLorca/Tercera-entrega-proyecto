@@ -43,42 +43,41 @@ mongoose.connect(
 //mongoose.connect("mongodb://localhost:27017/database");
 
 const carroSchema = new mongoose.Schema({
-
-    title: { type: String, required: false },
-    description: { type: String, required: false },
-    code: { type: String, required: false },
-    timestamp: { type: String, required: false },
-    stock: { type: Number, required: false },
-    price: { type: Number, required: false },
-    thumbnail: { type: String, required: false },
-    id: { type: Number, required: false },
-    idc: { type: Number, required: false }
+    user: { type: String, sparse: true },
+    title: { type: String, sparse: true },
+    description: { type: String, sparse: true },
+    code: { type: String, sparse: true },
+    timestamp: { type: String, sparse: true },
+    stock: { type: Number, sparse: true },
+    price: { type: Number, sparse: true },
+    thumbnail: { type: String, sparse: true },
+    id: { type: Number, sparse: true },
+    idc: { type: Number, sparse: true }
 
 })
 const carro = mongoose.model("carrito", carroSchema);
 
 const prodSchema = new mongoose.Schema({
-
-    title: { type: String, required: false },
-    description: { type: String, required: false },
-    code: { type: String, required: false },
-    timestamp: { type: String, required: false },
-    stock: { type: Number, required: false },
-    price: { type: Number, required: false },
-    thumbnail: { type: String, required: false },
-    id: { type: Number, required: false }
+    title: { type: String, sparse: true },
+    description: { type: String, sparse: true },
+    code: { type: String, sparse: true },
+    timestamp: { type: String, sparse: true },
+    stock: { type: Number, sparse: true },
+    price: { type: Number, sparse: true },
+    thumbnail: { type: String, sparse: true },
+    id: { type: Number, sparse: true }
 })
 const producto = mongoose.model("producto", prodSchema);
 
 const userSchema = new mongoose.Schema({
 
   email: { type: String, required: false },
-  password: { type: String, required: false },
+  password: { type: String, sparse: true },
   name: { type: String, required: false },
-  address: { type: String, required: false },
-  age: { type: Number, required: false },
-  celPhone: { type: Number, required: false },
-  photo: { type: String, required: false }
+  address: { type: String, sparse: true },
+  age: { type: Number, sparse: true },
+  celPhone: { type: Number, sparse: true },
+  photo: { type: String, sparse: true }
 })
 const userModel = mongoose.model("user", userSchema);
 

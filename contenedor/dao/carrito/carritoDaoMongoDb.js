@@ -8,15 +8,18 @@ class CarritosDaoMongoDb extends ContenedorMongoDb {
     super(carro);
   }
 
-  async addChart() {
+  async addChart(user) {
     try {
       for (; ;) {
         const resFind = await this.modelMongo.find({ idc: this.idc });
+        console.log(resFind);
+
         if (resFind[0]) { //Si existe el idc, incrementa en 1 y comprueba otra vez
           this.idc++;
         } else {          //Si no existe el indice, entonces lo guarda y devuelve el guardado
-          const resSave = await this.modelMongo({ idc: this.idc }).save();
-          return resSave.idc;
+          const chart = { idc: this.idc, user: user};
+          const resSave = await this.modelMongo(chart).save();
+          return resSave.user;
         }
       }
     } catch (error) {
@@ -24,13 +27,31 @@ class CarritosDaoMongoDb extends ContenedorMongoDb {
     }
   }
 
-  async addProdChart(objProd, carroId) {
+  async addChartUser(user) {
     try {
-      const resFind = await this.modelMongo.find({ idc: carroId });
+
+        const resFind = await this.modelMongo.find({ user: user });
+        console.log(user);
+        console.log(resFind);
+        if (resFind[0]) { //Si existe el idc, incrementa en 1 y comprueba otra vez
+          return null;
+        } else {          //Si no existe el indice, entonces lo guarda y devuelve el guardado
+          const resSave = await this.modelMongo({ user: user }).save();
+          return resSave.user;
+        }
+    } catch (error) {
+      console.log("Error en addChartUser(): " + error);
+    }
+  }
+
+  async addProdChart(objProd, carroName) {
+    try {
+      const resFind = await this.modelMongo.find({ user: carroName });
+      console.log(resFind);
 
       if (resFind[0]) {
-        objProd.idc = carroId;
-        const resSave = await this.modelMongo(objProd).save();
+        objProd[0].user = carroName;
+        const resSave = await this.modelMongo(objProd[0]).save();
         return resSave;
       } else {
         return null;
@@ -51,9 +72,9 @@ class CarritosDaoMongoDb extends ContenedorMongoDb {
     }
   }
 
-  async deleteByIdChart(carroId, prodId) {
+  async deleteByIdChart(carroName, prodId) {
     try {
-      const resFind = await this.modelMongo.find({ $and: [{ id: prodId }, { idc: carroId }] });
+      const resFind = await this.modelMongo.find({ $and: [{ id: prodId }, { user: carroName }] });
 
       if (resFind[0]) {
         const res = await this.modelMongo.deleteMany({ id: prodId });
@@ -67,9 +88,9 @@ class CarritosDaoMongoDb extends ContenedorMongoDb {
     }
   }
 
-  async deleteChart(carroId) {
+  async deleteChart(carroName) {
     try {
-      const res = await this.modelMongo.deleteMany({ idc: carroId });
+      const res = await this.modelMongo.deleteMany({ user: carroName });
       return res.deletedCount //Si 0 (no eliminado), si !=0 (eliminado)
     } catch (error) {
       console.log("Error en deleteChart(): " + error);

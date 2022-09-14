@@ -7,9 +7,9 @@ class ContenedorMongoDb {
     this.idc = 1;
   }
 
-  async getAll() {
+  async getAll(user) {
     try {
-      const resFind = await this.modelMongo.find().lean();
+      const resFind = await this.modelMongo.find({user: user}).lean();
       return resFind;
     } catch (error) {
       console.log("Error en getAll: " + error);
